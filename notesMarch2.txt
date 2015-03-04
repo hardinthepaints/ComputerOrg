@@ -1,0 +1,29 @@
+To Do list:
+   for the inside passage:   
+       first aid kit
+       life jacket
+       tent
+       knife
+       stove
+       water filter
+       make a list of snacks
+notes from computer org:
+      friday's quiz is going to be redone
+      friday's quiz was on filling out the stack chart
+      we r going to review it and redo the exact same one today
+      
+      c file:
+
+      #include <stdio.h>
+
+      char *fre( intx, char **strs )
+      {
+	return strs[x];
+      }
+
+      int main( int argc, char ** argv )
+      {
+	char *s = fred( 2, argv ); //whatever fred returns, store it in *s
+	printf( "HELLO %s\n", s);
+	return 42;
+      }

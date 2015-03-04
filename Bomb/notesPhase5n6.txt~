@@ -1,0 +1,43 @@
+Dump of assembler code for function phase_5:
+=> 0x08048d87 <+0>:	sub    $0x2c,%esp //allocate space for 11 slots
+   0x08048d8a <+3>:	lea    0x1c(%esp),%eax //$eax = &frame[7]
+   0x08048d8e <+7>:	mov    %eax,0xc(%esp) //frame[3] = &frame[7]
+   0x08048d92 <+11>:	lea    0x18(%esp),%eax //$eax = &frame[6]
+   0x08048d96 <+15>:	mov    %eax,0x8(%esp) //frame[2] = &frame[6]
+   0x08048d9a <+19>:	movl   $0x804a32f,0x4(%esp) //frame[1] = ...
+   0x08048da2 <+27>:	mov    0x30(%esp),%eax //$eax = param for p_5
+   0x08048da6 <+31>:	mov    %eax,(%esp) //frame[0] = param for p_5
+   0x08048da9 <+34>:	call   0x8048860 <__isoc99_sscanf@plt> //call sscanf
+   0x08048dae <+39>:	cmp    $0x1,%eax //compare 1 with $eax
+   0x08048db1 <+42>:	jg     0x8048db8 <phase_5+49> //jump if greater WANT THIS
+   0x08048db3 <+44>:	call   0x8049145 <explode_bomb> //explode
+   0x08048db8 <+49>:	mov    0x18(%esp),%eax //$eax = frame[6]
+   0x08048dbc <+53>:	and    $0xf,%eax //$eax = frame[6] & 0xf (aka first 4 bits preserved only)
+   	      //0xf in binary is 1111
+	      //in dec. 15
+   0x08048dbf <+56>:	mov    %eax,0x18(%esp) //frame[6] = $eax
+   0x08048dc3 <+60>:	cmp    $0xf,%eax //compare 0xf and %eax
+   0x08048dc6 <+63>:	je     0x8048df2 <phase_5+107> //jump if equal -do not want 
+   	      //original frame[6] cannot have all 1's in first 4 bits
+   0x08048dc8 <+65>:	mov    $0x0,%ecx //$ecx = 0
+   0x08048dcd <+70>:	mov    $0x0,%edx //$edx = 0
+   0x08048dd2 <+75>:	add    $0x1,%edx //%edx += 1
+   0x08048dd5 <+78>:	mov    0x804a1e0(,%eax,4),%eax //$eax = ... + 4*$eax 
+   	      15 words starting at the address:
+   	     //0x0000000a	0x00000002	0x0000000e	0x00000007
+	     //0x00000008	0x0000000c	0x0000000f	0x0000000b
+	     //0x00000000	0x00000004	0x00000001	0x0000000d
+	     //0x00000003	0x00000009	0x00000006
+
+   0x08048ddc <+85>:	add    %eax,%ecx //$ecx += $eax
+   0x08048dde <+87>:	cmp    $0xf,%eax //compare 0xf to $eax
+   0x08048de1 <+90>:	jne    0x8048dd2 <phase_5+75> //jump if not equal do not want
+   	      //need $eax == 0xf
+   0x08048de3 <+92>:	mov    %eax,0x18(%esp) //frame[6] = $eax
+   0x08048de7 <+96>:	cmp    $0xf,%edx //compare 0xf to $edx so edx should = 0
+   0x08048dea <+99>:	jne    0x8048df2 <phase_5+107> //jump if not eaqual do not want
+   0x08048dec <+101>:	cmp    0x1c(%esp),%ecx //compare $ecx to frame[7]
+   0x08048df0 <+105>:	je     0x8048df7 <phase_5+112> //jump if equal WANT EQUAL
+   0x08048df2 <+107>:	call   0x8049145 <explode_bomb> //BOOM
+   0x08048df7 <+112>:	add    $0x2c,%esp //unallocate space
+   0x08048dfa <+115>:	ret  

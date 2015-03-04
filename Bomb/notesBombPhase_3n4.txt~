@@ -1,0 +1,60 @@
+program code from phase 3
+=> 0x08048c02 <+0>:	sub    $0x2c,%esp //allocate space in stack for 11 slots
+   0x08048c05 <+3>:	lea    0x1c(%esp),%eax //$eax = &frame[7]
+   0x08048c09 <+7>:	mov    %eax,0xc(%esp) //frame[3] = &frame[7]
+   0x08048c0d <+11>:	lea    0x18(%esp),%eax //$eax = &frame[6]
+   0x08048c11 <+15>:	mov    %eax,0x8(%esp) //frame[2] = &frame[6] 
+   0x08048c15 <+19>:	movl   $0x804a32f,0x4(%esp) //frame[1] = ...
+   0x08048c1d <+27>:	mov    0x30(%esp),%eax //$eax = frame[12] param to phase 3
+   0x08048c21 <+31>:	mov    %eax,(%esp) //frame[0] = param to phase 3
+   0x08048c24 <+34>:	call   0x8048860 <__isoc99_sscanf@plt>
+   	      //in this case, sscanf takes in frame[0] and frame[1] as the string and format
+	      //frame[2] and frame[3] hold the addresses to store the things sscanf scanned
+	      //since frame[2],frame[3] = &frame[6],&frame[7] the latter two will hold the things
+   0x08048c29 <+39>:	cmp    $0x1,%eax //$eax - 1
+   0x08048c2c <+42>:	jg     0x8048c33 <phase_3+49> //jump if above is positive
+   	      //Need 2 integers on line 3 of solutions.txt
+	      //bc (gdb) printf "%s\n", 0x804a32f = %d %d
+	      //%d %d means 2 integers separated by spaces
+	      //
+
+   0x08048c2e <+44>:	call   0x8049145 <explode_bomb>
+
+   0x08048c33 <+49>:	cmpl   $0x7,0x18(%esp) //compare 7 and frame[6] 
+   0x08048c38 <+54>:	ja     0x8048ca0 <phase_3+158> //jump if positive aka explode if $esp > 7
+   0x08048c3a <+56>:	mov    0x18(%esp),%eax //$eax = frame[6]
+   0x08048c3e <+60>:	jmp    *0x804a1c0(,%eax,4) //jmp to this location, and then jump to address at that location
+   0x08048c45 <+67>:	mov    $0x0,%eax //$eax = 0
+   0x08048c4a <+72>:	jmp    0x8048c51 <phase_3+79> 
+   0x08048c4c <+74>:	mov    $0x2f8,%eax //$eax = 760
+   0x08048c51 <+79>:	sub    $0x1c5,%eax //$eax -= 453
+   0x08048c56 <+84>:	jmp    0x8048c5d <phase_3+91>
+   0x08048c58 <+86>:	mov    $0x0,%eax //$eax = 0
+   0x08048c5d <+91>:	add    $0x27b,%eax //eax += 635
+   0x08048c62 <+96>:	jmp    0x8048c69 <phase_3+103>
+   0x08048c64 <+98>:	mov    $0x0,%eax //$eax = 0
+   0x08048c69 <+103>:	sub    $0x282,%eax //eax -= 642
+   0x08048c6e <+108>:	jmp    0x8048c75 <phase_3+115>
+   0x08048c70 <+110>:	mov    $0x0,%eax //$eax = 0
+   0x08048c75 <+115>:	add    $0x282,%eax //eax += 642
+   0x08048c7a <+120>:	jmp    0x8048c81 <phase_3+127>
+   0x08048c7c <+122>:	mov    $0x0,%eax //$eax = 0
+   0x08048c81 <+127>:	sub    $0x282,%eax //eax -= 642
+   0x08048c86 <+132>:	jmp    0x8048c8d <phase_3+139>
+   0x08048c88 <+134>:	mov    $0x0,%eax //$eax = 0
+   0x08048c8d <+139>:	add    $0x282,%eax //$eax += 642
+   0x08048c92 <+144>:	jmp    0x8048c99 <phase_3+151>
+   0x08048c94 <+146>:	mov    $0x0,%eax //$eax = 0
+---Type <return> to continue, or q <return> to quit---
+   0x08048c99 <+151>:	sub    $0x282,%eax //$eax -= 642
+   0x08048c9e <+156>:	jmp    0x8048caa <phase_3+168> 
+   0x08048ca0 <+158>:	call   0x8049145 <explode_bomb>
+   0x08048ca5 <+163>:	mov    $0x0,%eax
+   0x08048caa <+168>:	cmpl   $0x5,0x18(%esp)
+   0x08048caf <+173>:	jg     0x8048cb7 <phase_3+181>
+   0x08048cb1 <+175>:	cmp    0x1c(%esp),%eax
+   0x08048cb5 <+179>:	je     0x8048cbc <phase_3+186>
+   0x08048cb7 <+181>:	call   0x8049145 <explode_bomb>
+   0x08048cbc <+186>:	add    $0x2c,%esp
+   0x08048cbf <+189>:	nop
+   0x08048cc0 <+190>:	ret    

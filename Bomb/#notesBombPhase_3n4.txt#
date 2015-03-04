@@ -1,0 +1,152 @@
+program code from phase 3
+=> 0x08048c02 <+0>:	sub    $0x2c,%esp //allocate space in stack for 11 slots
+   0x08048c05 <+3>:	lea    0x1c(%esp),%eax //$eax = &frame[7]
+   0x08048c09 <+7>:	mov    %eax,0xc(%esp) //frame[3] = &frame[7]
+   0x08048c0d <+11>:	lea    0x18(%esp),%eax //$eax = &frame[6]
+   0x08048c11 <+15>:	mov    %eax,0x8(%esp) //frame[2] = &frame[6] 
+   0x08048c15 <+19>:	movl   $0x804a32f,0x4(%esp) //frame[1] = ...
+   0x08048c1d <+27>:	mov    0x30(%esp),%eax //$eax = frame[12] param to phase 3
+   0x08048c21 <+31>:	mov    %eax,(%esp) //frame[0] = param to phase 3
+   0x08048c24 <+34>:	call   0x8048860 <__isoc99_sscanf@plt>
+   	      //in this case, sscanf takes in frame[0] and frame[1] as the string and format
+	      //frame[2] and frame[3] hold the addresses to store the things sscanf scanned
+	      //since frame[2],frame[3] = &frame[6],&frame[7] the latter two will hold the things
+   0x08048c29 <+39>:	cmp    $0x1,%eax //$eax - 1
+   0x08048c2c <+42>:	jg     0x8048c33 <phase_3+49> //jump if above is positive
+   	      //Need 2 integers on line 3 of solutions.txt
+	      //bc (gdb) printf "%s\n", 0x804a32f = %d %d
+	      //%d %d means 2 integers separated by spaces
+	      //
+
+   0x08048c2e <+44>:	call   0x8049145 <explode_bomb>
+
+   0x08048c33 <+49>:	cmpl   $0x7,0x18(%esp) //compare 7 and frame[6] 
+   0x08048c38 <+54>:	ja     0x8048ca0 <phase_3+158> //jump if positive aka explode if $frame[6] > 7
+   0x08048c3a <+56>:	mov    0x18(%esp),%eax //$eax = frame[6]
+   0x08048c3e <+60>:	jmp    *0x804a1c0(,%eax,4) //jmp to this location, and then jump to address at that location
+   	      //memory addresses at (gdb) x/8xw 0x804a1c0:
+	      //address    line   $eax
+	      //0x08048c4c <+74>  0	
+	      //0x08048c45 <+67>  1	
+	      //0x08048c58 <+86>  2	
+	      //0x08048c64 <+98>  3
+	      //0x08048c70 <+110> 4	
+	      //0x08048c7c <+122> 5	
+	      //0x08048c88 <+134> 6	
+	      //0x08048c94 <+146> 7
+
+   0x08048c45 <+67>:	mov    $0x0,%eax //$eax = 0
+   0x08048c4a <+72>:	jmp    0x8048c51 <phase_3+79> 
+
+   0x08048c4c <+74>:	mov    $0x2f8,%eax //$eax = 760
+   0x08048c51 <+79>:	sub    $0x1c5,%eax //$eax -= 453
+   0x08048c56 <+84>:	jmp    0x8048c5d <phase_3+91>
+
+   0x08048c58 <+86>:	mov    $0x0,%eax //$eax = 0
+   0x08048c5d <+91>:	add    $0x27b,%eax //eax += 635
+   0x08048c62 <+96>:	jmp    0x8048c69 <phase_3+103>
+
+   0x08048c64 <+98>:	mov    $0x0,%eax //$eax = 0
+   0x08048c69 <+103>:	sub    $0x282,%eax //eax -= 642
+   0x08048c6e <+108>:	jmp    0x8048c75 <phase_3+115>
+
+   0x08048c70 <+110>:	mov    $0x0,%eax //$eax = 0
+   0x08048c75 <+115>:	add    $0x282,%eax //eax += 642
+   0x08048c7a <+120>:	jmp    0x8048c81 <phase_3+127>
+
+   0x08048c7c <+122>:	mov    $0x0,%eax //$eax = 0
+   0x08048c81 <+127>:	sub    $0x282,%eax //eax -= 642
+   0x08048c86 <+132>:	jmp    0x8048c8d <phase_3+139>
+
+   0x08048c88 <+134>:	mov    $0x0,%eax //$eax = 0
+   0x08048c8d <+139>:	add    $0x282,%eax //$eax += 642
+   0x08048c92 <+144>:	jmp    0x8048c99 <phase_3+151>
+
+   0x08048c94 <+146>:	mov    $0x0,%eax //$eax = 0
+   0x08048c99 <+151>:	sub    $0x282,%eax //$eax -= 642
+   0x08048c9e <+156>:	jmp    0x8048caa <phase_3+168> //skip next 2 lines
+
+   0x08048ca0 <+158>:	call   0x8049145 <explode_bomb>
+   0x08048ca5 <+163>:	mov    $0x0,%eax //$eax = 0
+
+   0x08048caa <+168>:	cmpl   $0x5,0x18(%esp) //compare 5 to frame[6]
+   0x08048caf <+173>:	jg     0x8048cb7 <phase_3+181> //jump if frame[6] > 5 DO NOT WANT
+   0x08048cb1 <+175>:	cmp    0x1c(%esp),%eax //compare frame[7] and $eax
+   0x08048cb5 <+179>:	je     0x8048cbc <phase_3+186> //WANT $eax = frame[7]
+   0x08048cb7 <+181>:	call   0x8049145 <explode_bomb>
+   0x08048cbc <+186>:	add    $0x2c,%esp //$esp += 44
+   0x08048cbf <+189>:	nop
+   0x08048cc0 <+190>:	ret    
+
+
+
+
+Dump of assembler code for function phase_4:
+=> 0x08048d1e <+0>:	sub    $0x2c,%esp //allocate 11 slots of memory
+   0x08048d21 <+3>:	lea    0x1c(%esp),%eax //$eax = &frame[7]
+   0x08048d25 <+7>:	mov    %eax,0xc(%esp) //frame[3] = &frame[7]
+   0x08048d29 <+11>:	lea    0x18(%esp),%eax //$eax = &frame[6]
+   0x08048d2d <+15>:	mov    %eax,0x8(%esp) //frame[2] = &frame[6]
+   0x08048d31 <+19>:	movl   $0x804a32f,0x4(%esp) //frame[1] = ...
+   	      //(gdb) printf "%s\n", 0x804a32f = %d %d
+   0x08048d39 <+27>:	mov    0x30(%esp),%eax //$eax = parameter for phase_4
+   0x08048d3d <+31>:	mov    %eax,(%esp) //frame[0] = parameter for phase_4
+   0x08048d40 <+34>:	call   0x8048860 <__isoc99_sscanf@plt>
+   	      //now $eax = # of things successfully scanned
+   0x08048d45 <+39>:	cmp    $0x2,%eax //compare $eax to 2 WANT THIS
+   0x08048d48 <+42>:	jne    0x8048d51 <phase_4+51> //WANT EQUAL
+   0x08048d4a <+44>:	cmpl   $0xe,0x18(%esp) //compare frame[6] to 0
+   0x08048d4f <+49>:	jbe    0x8048d56 <phase_4+56> //'jump if below or equal' aka frame[6] <= 0
+   0x08048d51 <+51>:	call   0x8049145 <explode_bomb>
+   0x08048d56 <+56>:	movl   $0xe,0x8(%esp) //frame[2] = 0xe, dec. 14
+   0x08048d5e <+64>:	movl   $0x0,0x4(%esp) //frame[1] = 0
+   0x08048d66 <+72>:	mov    0x18(%esp),%eax //$eax = frame[6]
+   0x08048d6a <+76>:	mov    %eax,(%esp) //frame[0] = frame[6]
+   0x08048d6d <+79>:	call   0x8048cc1 <func4> //??
+   	      //want func4 to return 0x23
+   0x08048d72 <+84>:	cmp    $0x23,%eax //compare 0x23 (dec. 35) to $eax 
+   0x08048d75 <+87>:	jne    0x8048d7e <phase_4+96> //do not want
+   0x08048d77 <+89>:	cmpl   $0x23,0x1c(%esp) //compare 0x23 to frame[7]
+   0x08048d7c <+94>:	je     0x8048d83 <phase_4+101> WANT frame[7] = 0x23
+   0x08048d7e <+96>:	call   0x8049145 <explode_bomb>
+   0x08048d83 <+101>:	add    $0x2c,%esp //return esp to top of stack aka unallocate space
+   0x08048d86 <+104>:	ret   
+
+
+Dump of assembler code for function func4:
+=> 0x08048cc1 <+0>:	push   %esi //push value to stack, move esi down one slot
+   0x08048cc2 <+1>:	push   %ebx //push value to stack move esi down one slot
+   0x08048cc3 <+2>:	sub    $0x14,%esp //allocate space for 5 slots
+   0x08048cc6 <+5>:	mov    0x20(%esp),%edx //$edx = frame[0] ?
+   0x08048cca <+9>:	mov    0x24(%esp),%eax //$eax = frame[1] ?
+   0x08048cce <+13>:	mov    0x28(%esp),%esi //$esi = frame[2] ? am i forgetting parameters for func4?
+   0x08048cd2 <+17>:	mov    %esi,%ecx //
+   0x08048cd4 <+19>:	sub    %eax,%ecx
+   0x08048cd6 <+21>:	mov    %ecx,%ebx
+   0x08048cd8 <+23>:	shr    $0x1f,%ebx
+   0x08048cdb <+26>:	add    %ebx,%ecx
+   0x08048cdd <+28>:	sar    %ecx
+   0x08048cdf <+30>:	lea    (%ecx,%eax,1),%ebx
+   0x08048ce2 <+33>:	cmp    %edx,%ebx
+   0x08048ce4 <+35>:	jle    0x8048cfd <func4+60>
+   0x08048ce6 <+37>:	lea    -0x1(%ebx),%ecx
+   0x08048ce9 <+40>:	mov    %ecx,0x8(%esp)
+   0x08048ced <+44>:	mov    %eax,0x4(%esp)
+   0x08048cf1 <+48>:	mov    %edx,(%esp)
+   0x08048cf4 <+51>:	call   0x8048cc1 <func4>
+   0x08048cf9 <+56>:	add    %ebx,%eax
+   0x08048cfb <+58>:	jmp    0x8048d18 <func4+87>
+   0x08048cfd <+60>:	mov    %ebx,%eax
+   0x08048cff <+62>:	cmp    %edx,%ebx
+   0x08048d01 <+64>:	jge    0x8048d18 <func4+87>
+   0x08048d03 <+66>:	mov    %esi,0x8(%esp)
+   0x08048d07 <+70>:	lea    0x1(%ebx),%eax
+   0x08048d0a <+73>:	mov    %eax,0x4(%esp)
+   0x08048d0e <+77>:	mov    %edx,(%esp)
+   0x08048d11 <+80>:	call   0x8048cc1 <func4>
+   0x08048d16 <+85>:	add    %ebx,%eax
+   0x08048d18 <+87>:	add    $0x14,%esp
+   0x08048d1b <+90>:	pop    %ebx
+   0x08048d1c <+91>:	pop    %esi
+   0x08048d1d <+92>:	ret    
+

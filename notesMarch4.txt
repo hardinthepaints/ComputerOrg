@@ -1,0 +1,13 @@
+caches continued
+think of caches as a table with one column for addr and one for contents
+	'contents' is a an array of bits
+	for every address that you want to look up, the 
+	Important concepts:
+		blocking is the main way to optimize a program for caching
+		for quiz: know direct mapped and fully associative memories
+		direct mapped 
+
+lecture (not about caches)
+	in c code, fork(); makes a copy of the currently running program
+	threads all run within the same process
+	fork generates multiple processes

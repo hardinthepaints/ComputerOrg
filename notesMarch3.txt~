@@ -1,0 +1,37 @@
+Go over yesterday's quiz
+Things to remember:
+
+
+lecture
+CACHES
+	way too small to store all of memory
+	why do caches work? (to make computers more efficient) Possible answers:
+		1. computer knows what we will access next
+		2. access the same address repeatedly
+		3. acces "nearby" address
+	most systems split each cache in two: 1 for intructions, 1 for data
+	a cache is table with columns address and contents
+	-cache lines: memory 
+	given an address
+	direct mapped cache
+		given 256 rows in the cache
+		each row is locked to a certain group of cache lines
+	fully associative does not exist in real world
+
+
+	notes for cache lab
+		valgrind - a linux program
+			is like gdb
+			analyzes other programs
+			not interactive
+			looks for memory errors
+				ex notices when you write outside bounds of array
+			considered one of the most important developments for c programming
+		we will use the tool 'lackey'
+			simulates caches
+			'I' means instruction
+			indented 'L' means load-reading something from memory
+			indented 'S' means store-writing to memory
+			indented 'M' means both
+			the number after the comma is the number of bytes 
+			

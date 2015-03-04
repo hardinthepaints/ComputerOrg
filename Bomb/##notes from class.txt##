@@ -1,0 +1,111 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+notes in class feb 24
+	instructions:
+	cmp eax, edi => edi - eax
+	jns = 'jump not signed' aka will jump if the result of previous is nonnegative
+		checks if result is 0 or greater than 1 and if so will jump to arg
+        param
+        
+
+	NOTeS for bens bomb phase 3
+		essential feature: jmp w/ a *
+		sub - allocates space on stack
+		call to 'crazy coded function name' scanf means calling a standard c function
+		jg - jump next if previous is met, otherwise continue
+		ja - 
+		jmp to *(address) -
+		repeating 6 instructions:
+			mov, cmpl, je, call, mov, jmp
+			the jumps to go <+330>
+				which is a cmp
+		lea is like mov, but it moves the address at 
+				//the first argument and stores it in the 2nd arg
+				//lea is load effective address
+		in gdb, to print register, do '$eax'
+		all numbers refer to bytes
+	
+			specific notes on ben's code:
+				sub $0x3c,%esp //allocates space, 
+				lea 0x2c(%esp),%eax //$eax = &frame[11]
+				mov  %eax,0x10(%esp) //frame[4] = &frame[11]
+				lea 0x27(%esp),%eax //$eax = &frame[9.75] cus 0x27 = 39, 39/4 = 9.75
+				mov %eax,0xc(%esp) //frame[3] = &frame[9.75]
+				lea 0x28(%esp),%eax //$eax = &frame[10]
+				movl $0x804a242,0x4(%esp) //frame[1] = ...
+				mov 0x40(%esp),%eax //$eax = frame[16] param to phase 3
+				mov %eax, (%esp) //frame[0] = param to phase_3
+
+				    	  //in general to pass values into a function 
+					  //assign them to the bottom of the frame
+					  //what is a parameter?
+
+				call 0x8048860 <__isoc99__sscanf@plt>
+				     	  //def of 'call':
+					  	//gets address of next instruction after call pushes that onto stack
+						//everything after that is frame of the function
+						//return value is stored in eax
+					//sscanf takes a string, a string and ...
+						 //above, frame[0] is the input string
+						 //frame[1] is the format of the string
+						 //sscanf returns # of strings scanned
+						 //in this case, we are doing sscanf(<string to interrogate>, <format eg "%d">, <addresses to where to put the things read by sscanf>)
+						//format delineates  
+						//gdb x/s => examine as string
+					//at this time, x/s *(char**)$esp is "1 A 1" 
+					     //which are param to phase 3
+				cmp $0x2, %eax //if $eax is greater than 2 return 1 
+				jg //jump if positive
+				call explode bomb
+				cmpl $0x7, 0x28(%esp) //compare 7 and frame[10]
+				ja //jump if positive
+				mov 0x28(%esp),%eax //$eax - frame[10]
+				jmp *0x804a260(,%eax,4) //indirect jump => jump to given address 
+				    	//and then to the address stored there							
+					//z(,x,y) = x*y + z
+
+					//the given address is a pointer to an array of addresses
+					//(gdb) x/40x <address> = examine 40 bytes of in hex format at given address
+					//examining the *'d address
+					//we hope the address is helpful and not a bomb
+					//recall the repeating pattern: the value of eax determines how far to jump
+					//at first the value of $eax = input
+					//essentailly there are 8 choices of where to jump to, and eax is 0-7
+				//skipped some other code
+				mov $0x70,%eax
+				cmpl $0x91, 0x2c(%esp) // compare frame 11 to 0x91
+				
+
+				PHASE_4
+				sub %0x2c,%esp //allocate 11 slots
+				lea 0x18(%esp), %eax //$eax = &frame[6]
+				mov %eax,0xc(%esp) //frame[3] = &frame[6]
+				lea 0x1c(%esp),%eax //$eax = &frame[7]
+				mov %eax
+				movl $0x804a3cf,0x4(%esp) //frame[1] = ??
+				mov 0x30(%esp), %eax //$eax = param to p_4
+				mov %eax,(%esp) //frame[0] = param to p_4
+
+				call 0x8048860 <__isoc99_sscanf@plt>
+				cmp $0x2, %eax
+				jne 0x8048de5 <phase_4+56>
+				mov 0x18(%esp),%eax //$eax = frame[6]
+				sub $0x2,%eax // $eax =- 2
+				cmp $0x2, %eax // compare $eax, 2
+				jbe //will not jump if previous eax is < 2 and 				
+				calle explode bomb
+				mov 0x18(%esp), %eax //$eax = frame[6]
+				mov %eax,0x4(%esp)
+
+users/ben
+
+notes from feb 25, 2015
+      what happens when you write outside bounds of array 
+      	  int a[10];
+      	  a[15] = 80;
+	  answer: overwrite a slot higher than the function allocated
+
+notes from 
+      

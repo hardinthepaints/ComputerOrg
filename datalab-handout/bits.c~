@@ -184,7 +184,8 @@ int bitAnd(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return (x >> (n*8)) & 0xFF
+  /* gives the byte value at index n */
+  return (x >> (n*8)) & 0xFF;
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -195,7 +196,15 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+    /* mask off the sign bit, the or it with the new sign bit */
+    int mask = (0x80 << 24);
+    int hbit = x & mask;
+    int othe = x & (~mask);
+    int negn = (~n + 1);
+    othe >>= n;
+    othe |= (hbit >> n) & (1 << (31 + negn));
+    return othe;
+
 }
 /*
  * bitCount - returns count of number of 1's in word
@@ -205,7 +214,18 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+  int bits = 0;
+  int mask = 0x1 | (0x1 << 8) | (0x1 << 16) | (0x1 << 24); 
+  bits += x & mask;
+  bits += (x >> 1) & mask;
+  bits += (x >> 2) & mask;
+  bits += (x >> 3) & mask;
+  bits += (x >> 4) & mask;
+  bits += (x >> 5) & mask;
+  bits += (x >> 6) & mask;
+  bits += (x >> 7) & mask;
+  
+  return (bits & 0xFF) + ((bits >> 8) & 0xFF) + ((bits >> 16) & 0xFF) + ((bits >> 24) & 0xFF);
 }
 /* 
  * bang - Compute !x without using !
@@ -224,6 +244,7 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
+  /* gives the minimum possible value for an integer */
   return (0x8 << 28);
 }
 /* 
@@ -236,6 +257,14 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
+  /* determines whether the integer x can be represented as an n-bit two's complement integer*/
+  /* shift x n bits to the right,
+   *if it fits, then x should now be all 0's, if there are 1's then it doesn't fit
+   */
+  /* return (x >> n) == 0; */
+  int mask = x >> 31;
+  return !(((~x & mask) + (x & ~mask)) >> (n + ~0));
+  
   
 }
 /* 
@@ -247,7 +276,8 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+  /* divides integer x by 2 to the power of n */
+  return (x + ((x >> 31) & ((1 << n) + ~0))) >> n;
 }
 /* 
  * negate - return -x 
@@ -257,6 +287,7 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
+  /* Gives x * -1 */
   return ~x + 1;
 }
 /* 
@@ -267,7 +298,8 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+  int mask = 0x8 << 28;
+  return ;
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -301,7 +333,12 @@ int ilog2(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+  int topbit = (uf >> 31);
+  if !topbit{
+      return uf | (1<<31);
+    }
+
+  return uf & (~(1<<31));
 }
 /* 
  * float_i2f - Return bit-level equivalent of expression (float) x

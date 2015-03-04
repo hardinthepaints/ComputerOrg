@@ -1,0 +1,71 @@
+#include <stdio.h>
+//NAME ALEXANDER FEHSENFELD
+//this code is supposed to have the same effect as the IA32 code in from problem 3.54
+
+
+int decode2(int x, int y, int z)
+{
+  int a = (y-z); //a at %edx
+  int b = a; //b @ %eax
+  b = ((b<<31)>>31); //b still at %eax
+  a = a * x;
+  a = a ^ b; //xorl %edx, %eax
+  return a;
+}
+
+
+/* from problem 3.55 in Computer Systems: A programmer's perspective:
+
+
+3.55
+The following code computes the product of x and y and stores
+ the result in memory. Data type ll_t is defined to be 
+equivalent to long long.
+typedef long long ll_t;
+void store_prod(ll_t *dest, int x, ll_t y) {
+*dest = x*y;
+}
+gcc generates the following assembly code implementing the computation:
+
+
+
+This code uses three multiplications to implement the multiprecision arithmetic required to implement 64-bit arithmetic on a 32-bit machine. Describe the algorithm used to compute the product, and annotate the assembly code to show
+how it realizes your algorithm. Hint: See Problem 3.12 and its solution.
+*/ 
+
+typedef long long ll_t;
+
+void store_prod(ll_t *dest, int x, ll_t y) {
+  *dest = x*y;
+}
+
+/*
+gcc generates the following assembly code implementing the computation:
+
+
+dest at %ebp +8, x at %ebp +12, y at %ebp +16
+*/
+
+  1	movl	16(%ebp), %esi //get y_l
+  2	movl	12(%ebp), %eax //get x
+  3	movl	%eax, %edx //get x
+  4	sarl	$31, %edx //edx>>31, (edx contains x)
+  5	movl	20(%ebp), %ecx //get y_h
+  6	imull	%eax, %ecx //compute x * y_h
+  7	movl	%edx, %ebx //get x>>31
+  8	imull	%esi, %ebx //compute y_l * x>>31
+  9	addl	%ebx, %ecx //compute (x>>31 * y_l)+(x * y_h)
+  10	mull	%esi //compute q = y_l * x, higher part stored in %edx, lowerpart in %eax
+  11	leal	(%ecx,%edx), %edx //add (x>>31 * y_l)+(x * y_h) + q_h
+  12	movl	8(%ebp), %ecx //get destination address 
+  13	movl	%eax, (%ecx) //store q_l
+  14	movl	%edx, 4(%ecx) //store result_h
+
+  //let the low order 32 bits of y be represented by y_l and the high order 32 bits by y_h. 
+  //x is a 32 bit integer and y is 64 bit integer
+  //since y is 64 bits long, the solution x*y is 64 bits
+  //so solution s = s_h * 2^32 + s_l
+
+  //let q = y_l * x, which is the 64 bit solution of line 10
+  //s_h = (x>>31)*y_l + x*y_h + q_h
+  //s_l = q_l

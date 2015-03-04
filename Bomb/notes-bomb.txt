@@ -1,0 +1,134 @@
+   0x08048b90 <+0>:	sub    $0x1c,%esp //subtracts 1 from %esp
+   0x08048b93 <+3>:	movl   $0x804a164,0x4(%esp) 
+   0x08048b9b <+11>:	mov    0x20(%esp),%eax //copy something from 8 slots up from %esp
+   0x08048b9f <+15>:	mov    %eax,(%esp) //copy value to esp
+   0x08048ba2 <+18>:	call   0x804903a <strings_not_equal>
+   0x08048ba7 <+23>:	test   %eax,%eax
+   0x08048ba9 <+25>:	je     0x8048bb0 <phase_1+32>
+   0x08048bab <+27>:	call   0x8049145 <explode_bomb>
+   0x08048bb0 <+32>:	add    $0x1c,%esp
+   0x08048bb3 <+35>:	ret   
+
+
+
+Program code from phase_2
+ 0x08048bb4 <+0>:	push   %esi //store value in stack
+   0x08048bb5 <+1>:	push   %ebx //store value in stack
+   0x08048bb6 <+2>:	sub    $0x34,%esp //go down 13 slots in stack
+   0x08048bb9 <+5>:	lea    0x18(%esp),%eax //get address 6 steps below esp and store in eax
+
+   0x08048bbd <+9>:	mov    %eax,0x4(%esp) //copy value in eax 1 slot down from esp
+   0x08048bc1 <+13>:	mov    0x40(%esp),%eax //copies what is a 16 slots below esp to eax
+   0x08048bc5 <+17>:	mov    %eax,(%esp) //copy value to stack
+   0x08048bc8 <+20>:	call   0x804916c <read_six_numbers> //
+   0x08048bcd <+25>:	cmpl   $0x1,0x18(%esp) //return 1 if 0x18(%esp) is equal to 1
+   0x08048bd2 <+30>:	je     0x8048bf2 <phase_2+62> //jump to line 62 if previous is true
+   0x08048bd4 <+32>:	call   0x8049145 <explode_bomb> 
+   0x08048bd9 <+37>:	jmp    0x8048bf2 <phase_2+62>
+
+   0x08048bdb <+39>:	mov    -0x4(%ebx),%eax //copy value at 1 slot above ebx to eax
+   0x08048bde <+42>:	add    %eax,%eax //double the value at eax
+   0x08048be0 <+44>:	cmp    %eax,(%ebx) //compare eax to (ebx)
+   0x08048be2 <+46>:	je     0x8048be9 <phase_2+53>
+   0x08048be4 <+48>:	call   0x8049145 <explode_bomb>
+   0x08048be9 <+53>:	add    $0x4,%ebx
+   0x08048bec <+56>:	cmp    %esi,%ebx
+   0x08048bee <+58>:	jne    0x8048bdb <phase_2+39>
+   0x08048bf0 <+60>:	jmp    0x8048bfc <phase_2+72>
+
+   0x08048bf2 <+62>:	lea    0x1c(%esp),%ebx //load effective address 7 slots above esp, store it in ebx
+   0x08048bf6 <+66>:	lea    0x30(%esp),%esi //load effective address at first arg, store in esi
+   0x08048bfa <+70>:	jmp    0x8048bdb <phase_2+39> //go to line 39
+   0x08048bfc <+72>:	add    $0x34,%esp
+   0x08048bff <+75>:	pop    %ebx
+
+program code from phase 3
+=> 0x08048c02 <+0>:	sub    $0x2c,%esp //allocate space in stack for 11 slots
+   0x08048c05 <+3>:	lea    0x1c(%esp),%eax //
+   0x08048c09 <+7>:	mov    %eax,0xc(%esp)
+   0x08048c0d <+11>:	lea    0x18(%esp),%eax
+   0x08048c11 <+15>:	mov    %eax,0x8(%esp)
+   0x08048c15 <+19>:	movl   $0x804a32f,0x4(%esp)
+   0x08048c1d <+27>:	mov    0x30(%esp),%eax
+   0x08048c21 <+31>:	mov    %eax,(%esp)
+   0x08048c24 <+34>:	call   0x8048860 <__isoc99_sscanf@plt>
+   0x08048c29 <+39>:	cmp    $0x1,%eax
+   0x08048c2c <+42>:	jg     0x8048c33 <phase_3+49>
+   0x08048c2e <+44>:	call   0x8049145 <explode_bomb>
+   0x08048c33 <+49>:	cmpl   $0x7,0x18(%esp)
+   0x08048c38 <+54>:	ja     0x8048ca0 <phase_3+158>
+   0x08048c3a <+56>:	mov    0x18(%esp),%eax
+   0x08048c3e <+60>:	jmp    *0x804a1c0(,%eax,4)
+   0x08048c45 <+67>:	mov    $0x0,%eax
+   0x08048c4a <+72>:	jmp    0x8048c51 <phase_3+79>
+   0x08048c4c <+74>:	mov    $0x2f8,%eax
+   0x08048c51 <+79>:	sub    $0x1c5,%eax
+   0x08048c56 <+84>:	jmp    0x8048c5d <phase_3+91>
+   0x08048c58 <+86>:	mov    $0x0,%eax
+   0x08048c5d <+91>:	add    $0x27b,%eax
+   0x08048c62 <+96>:	jmp    0x8048c69 <phase_3+103>
+   0x08048c64 <+98>:	mov    $0x0,%eax
+   0x08048c69 <+103>:	sub    $0x282,%eax
+   0x08048c6e <+108>:	jmp    0x8048c75 <phase_3+115>
+   0x08048c70 <+110>:	mov    $0x0,%eax
+   0x08048c75 <+115>:	add    $0x282,%eax
+   0x08048c7a <+120>:	jmp    0x8048c81 <phase_3+127>
+   0x08048c7c <+122>:	mov    $0x0,%eax
+   0x08048c81 <+127>:	sub    $0x282,%eax
+   0x08048c86 <+132>:	jmp    0x8048c8d <phase_3+139>
+   0x08048c88 <+134>:	mov    $0x0,%eax
+   0x08048c8d <+139>:	add    $0x282,%eax
+   0x08048c92 <+144>:	jmp    0x8048c99 <phase_3+151>
+   0x08048c94 <+146>:	mov    $0x0,%eax
+---Type <return> to continue, or q <return> to quit---
+   0x08048c99 <+151>:	sub    $0x282,%eax
+   0x08048c9e <+156>:	jmp    0x8048caa <phase_3+168>
+   0x08048ca0 <+158>:	call   0x8049145 <explode_bomb>
+   0x08048ca5 <+163>:	mov    $0x0,%eax
+   0x08048caa <+168>:	cmpl   $0x5,0x18(%esp)
+   0x08048caf <+173>:	jg     0x8048cb7 <phase_3+181>
+   0x08048cb1 <+175>:	cmp    0x1c(%esp),%eax
+   0x08048cb5 <+179>:	je     0x8048cbc <phase_3+186>
+   0x08048cb7 <+181>:	call   0x8049145 <explode_bomb>
+   0x08048cbc <+186>:	add    $0x2c,%esp
+   0x08048cbf <+189>:	nop
+   0x08048cc0 <+190>:	ret    
+
+
+
+
+notes in class feb 24
+	instructions:
+	cmp eax, edi => edi - eax
+	jns = 'jump not signed' aka will jump if the result of previous is nonnegative
+		checks if result is 0 or greater than 1 and if so will jump to arg
+
+	NOTeS for bens bomb phase 3
+		essential feature: jmp w/ a *
+		sub - allocates space on stack
+		call to 'crazy coded function name' scanf means calling a standard c function
+		jg - jump next if previous is met, otherwise continue
+		ja - 
+		jmp to *(address) -
+		repeating 6 instructions:
+			mov, cmpl, je, call, mov, jmp
+			the jumps to go <+330>
+				which is a cmp
+		lea is like mov, but it moves the address at 
+				//the first argument and stores it in the 2nd arg
+				//lea is load effective address
+		in gdb, to print register, do '$eax'
+		all numbers refer to bytes
+	
+			specific notes on ben's code:
+				sub $0x3c,%esp //allocates space, 
+				lea 0x2c(%esp),%eax //$eax = &frame[11]
+				mov  %eax,0x10(%esp) //frame[4] = &frame[11]
+				lea 0x27(%esp),%eax //$eax = &frame[9.75] cus 0x27 = 39, 39/4 = 9.75
+				mov %eax,0xc(%esp) //frame[3] = &frame[9.75]
+				lea 0x28(%esp),%eax //$eax = &frame[10]
+				movl $0x804a242,0x4(%esp) //frame[1] = ...
+				mov 0x40 												
+
+	
+

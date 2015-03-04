@@ -196,7 +196,15 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+    /* mask off the sign bit, the or it with the new sign bit */
+    int mask = (0x80 << 24);
+    int hbit = x & mask;
+    int othe = x & (~mask);
+    int negn = (~n + 1);
+    othe >>= n;
+    othe |= (hbit >> n) & (1 << (31 + negn));
+    return othe;
+
 }
 /*
  * bitCount - returns count of number of 1's in word
@@ -206,7 +214,18 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+  int bits = 0;
+  int mask = 0x1 | (0x1 << 8) | (0x1 << 16) | (0x1 << 24); 
+  bits += x & mask;
+  bits += (x >> 1) & mask;
+  bits += (x >> 2) & mask;
+  bits += (x >> 3) & mask;
+  bits += (x >> 4) & mask;
+  bits += (x >> 5) & mask;
+  bits += (x >> 6) & mask;
+  bits += (x >> 7) & mask;
+  
+  return (bits & 0xFF) + ((bits >> 8) & 0xFF) + ((bits >> 16) & 0xFF) + ((bits >> 24) & 0xFF);
 }
 /* 
  * bang - Compute !x without using !
@@ -216,7 +235,14 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+      /* or the top half bytes with the bottom half bytes, so if there was a 1
+     * it would end up in the bottom half */
+    x |= x >> 16;
+    x |= x >> 8;
+    x |= x >> 4;
+    x |= x >> 2;
+    x |= x >> 1;
+    return (x & 1) ^ 1;
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -279,7 +305,10 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+    /* gets the sign bit, and checks returns 1 if its sign bit is 0 and x != 0*/
+    int highbit = ((x & (1 << 31)) >> 31) & 1;
+    return (highbit ^ 1) ^ (!x);
+  
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -289,7 +318,19 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+    /* calculates x <= y by moving x and y so their on opposite sides of 0 */
+    int equal, shift, mask, x_neg_y_pos, x_is_min;
+    shift = ~((x >> 1) + (y >> 1) + 1) + 1;
+    mask = 0x80 << 24;
+    x_is_min = !(x ^ mask); /*1 if x is equal to the mask, and 0 if not*/
+
+    x += shift;
+    y += shift;
+    equal = !(x ^ y);
+
+    x_neg_y_pos = !!(x & mask) & !(y & mask);
+
+    return equal | x_neg_y_pos | x_is_min;
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
@@ -299,7 +340,27 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4
  */
 int ilog2(int x) {
-  return 2;
+    /* calculates the log by checking the first four bytes, then two, then 1 then 4 bits ...*/
+    int mask1 = 0xFF << 24 | 0xFF << 16;
+    int mask2 = 0xFF << 8;
+    int mask3 = 0xF0;
+    int mask4 = 0x0C;
+    int output = 0;
+    int shift;
+    output = !!(x & mask1) << 4; /* if anythings in high 4 bytes, output is at least 16 */
+    x >>= output; /* bring the high bits down, if anythings up there */
+    shift = !!(x & mask2) << 3; /* check next two bytes, if anythings there, its at least 8 more*/
+    x >>= shift;
+    output += shift;
+    shift = !!(x & mask3) << 2; /* check the next byte, if anythings there, its at least 4 more */
+    x >>= shift;
+    output += shift;
+    shift = !!(x & mask4) << 1; /* check the next 4 bits, if anythings there, its at least 2 more */
+    x >>= shift;
+    output += shift;
+    output += (x >> 1); /* check the second to last bit, if anythings there, its 1 more */
+    /* can disregard the last bit, because it wont matter if to the log */
+    return output;
 }
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
@@ -313,7 +374,15 @@ int ilog2(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+  unsigned mask = 0x80 << 24;
+  unsigned NaN = 0x7FC00000; 
+  unsigned inf = 0xFFC00000; 
+  if ( uf == NaN || uf == inf)
+    {
+      return uf;
+    }
+  unsigned negUf = mask ^ uf;
+  return negUf;
 }
 /* 
  * float_i2f - Return bit-level equivalent of expression (float) x
@@ -325,7 +394,49 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 unsigned float_i2f(int x) {
-  return 2;
+  // convert integer to its bit-equivalent floating point representation
+  // but return it as an unsigned integer
+  // format: 
+  // 1 sign bit
+  // 8 exponent bits
+  // 23 mantissa bits (plus the 'most significant bit' which is always 1
+  printf("\n%i", x);
+
+  // zero is the same in int and float:
+  if (x == 0) {return x;}
+
+  // sign is bit 31: that bit should just be transferred to the float:
+  sign = x & 0x8000;
+
+  // if number is < 0, take two's complement:
+  int absX;
+  if(sign != 0) { 
+    absX = ~x + 1;
+  }
+  else 
+    absX = x;
+}
+
+// Take at most 24 bits:
+unsigned int bits23 = 0xFF800000;
+unsigned int bits24 = 0xFF000000;
+unsigned E = 127-24;  // could be off by 1
+
+// shift right if there are bits above bit 24:
+while(absX & bits24) {
+  E++;   // check that you add and don't subtract...
+  absX >>= 1;
+ }
+// shift left if there are no bits above bit 23:
+// check that it terminates at the right point.
+while (!(absX & bits23))
+  E--;   // check direction
+absX <<= 1;
+}
+
+// now put the numbers we have together in the return value:
+// check that they are truncated correctly
+return sign | (E << 23) | (absX & ~bits23);
 }
 /* 
  * float_twice - Return bit-level equivalent of expression 2*f for

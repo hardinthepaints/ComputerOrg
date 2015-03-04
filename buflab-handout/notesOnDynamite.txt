@@ -1,0 +1,16 @@
+Fri 27 Feb 2015 10:55:28 AM MST 
+notes from class n level 3 dynamite:
+	//flow of how our exploit works:
+		//getbuf executes
+		//gets overwrites our return address
+		//getbuf returns to ret addr
+	//to get to exploit code, need address of string
+unsigned dynamite( int x )
+{
+	return <cookie>;
+	if (x)
+	{
+		void *addr = <address
+		goto addr;		
+	}
+}

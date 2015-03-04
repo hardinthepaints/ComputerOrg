@@ -1,0 +1,4 @@
+caches continued
+think of caches as a table with one column for addr and one for contents
+	'contents' is a an array of bits
+	for every address that you want to look up, the 
